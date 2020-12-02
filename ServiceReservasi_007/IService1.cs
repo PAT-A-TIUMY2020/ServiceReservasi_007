@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text 
+using System.Text;
 
 namespace ServiceReservasi_007
 {
@@ -14,7 +14,7 @@ namespace ServiceReservasi_007
         [OperationContract]
         string Pemesanan(string IDPemesanan, string NamaCustomer, string NoTelpon, int JumlahPemesanan, string IDLokasi); //method //proses input data
         [OperationContract]
-        string editPemesanan(string IDPemesanan, string NamaCustomer);
+        string editPemesanan(string IDPemesanan, string NamaCustomer, string No_telpon);
         [OperationContract]
         string deletePemesanan(string IDPemesanan);
         [OperationContract]
@@ -78,6 +78,6 @@ namespace ServiceReservasi_007
         [DataMember]
         public int JumlahPemesanan { get; set; }
         [DataMember]
-        public string IDLokasi { get; set; }
+        public string Lokasi { get; set; }
     }
 }

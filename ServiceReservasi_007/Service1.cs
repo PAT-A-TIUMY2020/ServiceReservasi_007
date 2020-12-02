@@ -16,10 +16,26 @@ namespace ServiceReservasi_007
         SqlConnection connection;
         //untuk menghubungkan database
         SqlCommand com;
+        private string constring;
 
         public string deletePemesanan(string IDPemesanan)
         {
-            throw new NotImplementedException();
+            string a = "gagal";
+            try
+            {
+                string sql = "delete from dbo.Pemesanan where ID_reservasi = '" + IDPemesanan + "'";
+                connection = new SqlConnection(constring); //fungsi konek ke database
+                com = new SqlCommand(sql, connection);
+                connection.Open();
+                com.ExecuteNonQuery();
+                connection.Close();
+                a = "sukses";
+            }
+            catch (Exception es)
+            {
+                Console.WriteLine(es);
+            }
+            return a;
         }
 
         public List<DetailLokasi> DetailLokasi()
@@ -52,29 +68,88 @@ namespace ServiceReservasi_007
             return LokasiFull;
         }
 
-        public string editPemesanan(string IDPemesanan, string NamaCustomer)
+        public string editPemesanan(string IDPemesanan, string NamaCustomer, string No_telpon)
         {
-            throw new NotImplementedException();
+            
+            string a = "gagal";
+            try
+            {
+                string sql = "update dbo.Pemesanan set Nama_customer = '" + NamaCustomer + "',No_telpon = '" + No_telpon + "'" + "where ID_reservasi ='" + IDPemesanan + "'";
+                connection = new SqlConnection(connectionString);
+                com = new SqlCommand(sql, connection);
+                connection.Open();
+                com.ExecuteNonQuery();
+                connection.Close();
+
+                a = "Sukses";
+            }
+            catch (Exception es)
+            {
+                Console.WriteLine(es);
+            }
+
+            return a;
         }
         
 
         public string Pemesanan(string IDPemesanan, string NamaCustomer, string NoTelpon, int JumlahPemesanan, string IDLokasi)
         {
             string a = "gagal";
-            string sql = "insert into dbo.Pemesanan values ('" + IDPemesanan + "','" + NamaCustomer + "','" + NoTelpon + "'," + JumlahPemesanan + ",'" + IDLokasi + "')";
+            try
+            {
+                string sql = "insert into dbo.Pemesanan values ('" + IDPemesanan + "','" + NamaCustomer + "','" + NoTelpon + "'," + JumlahPemesanan + ",'" + IDLokasi + "')"; //petik 1 untuk menyatakan varchar, petik 2 menyatakan int
 
-            connection = new SqlConnection(connectionString);
-            com = new SqlCommand(sql, connection);
-            connection.Open();
-            com.ExecuteNonQuery();
-            connection.Close();
-            a = "Sukses";
+                connection = new SqlConnection(connectionString); //fungsi konek ke database
+                com = new SqlCommand(sql, connection);
+                connection.Open();
+                com.ExecuteNonQuery();
+                connection.Close();
+
+                string sql2 = "update dbo.Lokasi set Kuota = Kuota - " + JumlahPemesanan + " where ID_lokasi = '" + IDLokasi + "' ";
+                connection = new SqlConnection(constring); //fungsi konek ke database
+                com = new SqlCommand(sql2, connection);
+                connection.Open();
+                com.ExecuteNonQuery();
+                connection.Close();
+
+                a = "Sukses";
+            }
+            catch (Exception es)
+            {
+                Console.WriteLine(es);
+            }
             return a;
         }
 
         public List<Pemesanan> Pemesanan()
         {
-            throw new NotImplementedException();
+            List<Pemesanan> pemesanans = new List<Pemesanan>();
+            try
+            {
+                string sql = "select ID_reservasi, Nama_customer, No_telpon, " + "Jumlah_pemesanan, Nama_Lokasi from dbo.pemesanan p join dbo.Lokasi 1 on p.ID_lokasi = 1.ID_lokasi";
+                connection = new SqlConnection(constring); //fungsi konek ke database
+                com = new SqlCommand(sql, connection); //proses execute query
+                connection.Open(); //membuka koneksi
+                SqlDataReader reader = com.ExecuteReader(); //menampilkan data query
+                while (reader.Read())
+                {
+                    /* nama class*/
+                    Pemesanan data = new Pemesanan(); //deklarasi data, mengambil 1 persatu dari database
+                    //bentuk array
+                    data.IDPemesanan = reader.GetString(0); //0 itu index, ada dikolom keberapa di string sql ditas
+                    data.NamaCustomer = reader.GetString(1);
+                    data.NoTelpon = reader.GetString(2);
+                    data.JumlahPemesanan = reader.GetInt32(3);
+                    data.Lokasi = reader.GetString(4);
+                    pemesanans.Add(data); //mengumpulkan data yang awalnya dari array
+                }
+                connection.Close(); //untuk menutup akses ke database
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return pemesanans;
         }
 
         public List<CekLokasi> ReviewLokasi()
